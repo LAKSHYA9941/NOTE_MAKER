@@ -23,21 +23,23 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isLogin
-  ? 'http://localhost:5000/api/auth/login'
-  : 'http://localhost:5000/api/auth/signup';
-
-    // const url = isLogin ? '/api/auth/login' : '/api/auth/signup';
-
+      ? 'http://localhost:5000/api/auth/login'
+      : 'http://localhost:5000/api/auth/signup';
   
     try {
       const res = await axios.post(url, formData);
-      console.log('✅ Auth success:', res.data); // this gives token + email
+      console.log('✅ Auth success:', res.data);
+  
+      // ✅ Save token to localStorage
+      localStorage.setItem('token', res.data.token);
+  
       navigate('/dashboard');
     } catch (err) {
       console.error('❌ Auth error:', err.response?.data);
       setError(err.response?.data?.message || 'Something went wrong');
     }
   };
+  
   
 
   return (
