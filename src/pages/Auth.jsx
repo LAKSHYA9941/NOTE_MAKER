@@ -7,6 +7,7 @@ const Auth = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
 
   const toggleMode = () => {
     setIsLogin(prev => !prev);
@@ -23,24 +24,25 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isLogin
-      ? 'http://localhost:5000/api/auth/login'
-      : 'http://localhost:5000/api/auth/signup';
-  
+      ? `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`
+      : `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`;
+
+
     try {
       const res = await axios.post(url, formData);
       console.log('✅ Auth success:', res.data);
-  
+
       // ✅ Save token to localStorage
       localStorage.setItem('token', res.data.token);
-  
+
       navigate('/dashboard');
     } catch (err) {
       console.error('❌ Auth error:', err.response?.data);
       setError(err.response?.data?.message || 'Something went wrong');
     }
   };
-  
-  
+
+
 
   return (
     <div className="min-h-screen pt-32 bg-gradient-to-b from-purple-100 via-pink-50 to-blue-100 flex items-center justify-center overflow-hidden">

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import NoteForm from '../components/NoteForm';
@@ -11,14 +10,17 @@ const Notes = () => {
   const baseURL = import.meta.env.VITE_API_BASE_URL;
   console.log("🔗 Backend baseURL:", baseURL);
 
-
   useEffect(() => {
     const userToken = localStorage.getItem('token');
     if (userToken) fetchNotes(userToken);
   }, []);
-  
 
   const fetchNotes = async (authToken) => {
+    if (!baseURL) {
+      console.error("Backend base URL not found!");
+      return;
+    }
+
     try {
       const res = await axios.get(`${baseURL}/notes`, {
         headers: {
@@ -27,12 +29,23 @@ const Notes = () => {
       });
       setNotes(res.data);
     } catch (error) {
-      console.error('Error fetching notes:', error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        alert('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+      } else {
+        console.error('Error fetching notes:', error.response?.data || error.message);
+      }
     }
   };
 
   const addNote = async (note) => {
-    const userToken = localStorage.getItem('token'); // ⬅️ Get fresh token
+    if (!baseURL) {
+      console.error("Backend base URL not found!");
+      return;
+    }
+
+    const userToken = localStorage.getItem('token');
     console.log("🛡️ POST token being sent:", userToken);
 
     try {
@@ -43,12 +56,23 @@ const Notes = () => {
       });
       setNotes([res.data, ...notes]);
     } catch (error) {
-      console.error('Error adding note:', error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        alert('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+      } else {
+        console.error('Error adding note:', error.response?.data || error.message);
+      }
     }
   };
 
   const deleteNote = async (id) => {
-    const userToken = localStorage.getItem('token'); // ⬅️ Again, fresh!
+    if (!baseURL) {
+      console.error("Backend base URL not found!");
+      return;
+    }
+
+    const userToken = localStorage.getItem('token');
     try {
       await axios.delete(`${baseURL}/notes/${id}`, {
         headers: {
@@ -57,10 +81,15 @@ const Notes = () => {
       });
       setNotes(notes.filter(note => note._id !== id));
     } catch (error) {
-      console.error('Error deleting note:', error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        alert('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+      } else {
+        console.error('Error deleting note:', error.response?.data || error.message);
+      }
     }
   };
-  
 
   return (
     <div className="min-h-screen pt-24 px-6 bg-gradient-to-tr from-[#f0faff] via-[#fdf7ff] to-[#f7faff] relative overflow-hidden text-gray-800">

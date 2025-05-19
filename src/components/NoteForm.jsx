@@ -12,26 +12,35 @@ const NoteForm = ({ onAdd }) => {
     setContent('');
   };
 
+  const isDisabled = !title.trim() || !content.trim();
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 bg-white bg-opacity-60 backdrop-blur-md p-6 rounded-lg shadow-md"
+    >
       <input
         type="text"
         placeholder="Note Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full px-4 py-2 border rounded shadow-sm"
+        className="w-full px-4 py-2 border border-purple-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm transition"
       />
       <textarea
         placeholder="Write your note here..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full px-4 py-2 border rounded shadow-sm"
+        rows={4}
+        className="w-full px-4 py-2 border border-purple-200 rounded resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm transition"
       ></textarea>
       <button
         type="submit"
-        className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded shadow"
+        disabled={isDisabled}
+        className={`w-full bg-purple-700 text-white px-6 py-2 rounded font-semibold shadow hover:bg-purple-500 transition ${
+          isDisabled ? 'opacity-60 cursor-not-allowed' : ''
+        }`}
       >
-        Add Note
+        ➕ Add Note
       </button>
     </form>
   );
