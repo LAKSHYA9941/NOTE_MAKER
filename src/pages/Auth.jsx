@@ -6,7 +6,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // 👁️
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const toggleMode = () => {
@@ -28,12 +28,21 @@ const Auth = () => {
       : `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`;
 
     try {
-      const res = await axios.post(url, formData);
+      console.log("🌐 Sending request to:", url);
+      console.log("📦 Payload:", formData);
+
+      const res = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Helps with CORS cookies (if used)
+      });
+
       console.log('✅ Auth success:', res.data);
       localStorage.setItem('token', res.data.token);
       navigate('/dashboard');
     } catch (err) {
-      console.error('❌ Auth error:', err.response?.data);
+      console.error('❌ Auth error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Something went wrong');
     }
   };
@@ -46,7 +55,7 @@ const Auth = () => {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
-            type="text"
+            type="email"
             name="email"
             placeholder="Email"
             value={formData.email}
@@ -54,6 +63,7 @@ const Auth = () => {
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
           />
+
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
