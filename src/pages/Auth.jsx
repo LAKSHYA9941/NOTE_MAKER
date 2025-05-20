@@ -6,8 +6,8 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 👁️
   const navigate = useNavigate();
-  
 
   const toggleMode = () => {
     setIsLogin(prev => !prev);
@@ -27,22 +27,16 @@ const Auth = () => {
       ? `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`
       : `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`;
 
-
     try {
       const res = await axios.post(url, formData);
       console.log('✅ Auth success:', res.data);
-
-      // ✅ Save token to localStorage
       localStorage.setItem('token', res.data.token);
-
       navigate('/dashboard');
     } catch (err) {
       console.error('❌ Auth error:', err.response?.data);
       setError(err.response?.data?.message || 'Something went wrong');
     }
   };
-
-
 
   return (
     <div className="min-h-screen pt-32 bg-gradient-to-b from-purple-100 via-pink-50 to-blue-100 flex items-center justify-center overflow-hidden">
@@ -54,21 +48,31 @@ const Auth = () => {
           <input
             type="text"
             name="email"
-            placeholder="Email "
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-purple-600"
+              tabIndex={-1}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           <button
             type="submit"
             className="w-full bg-purple-600 hover:bg-purple-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
