@@ -22,7 +22,7 @@ const Notes = () => {
     }
 
     try {
-      const res = await axios.get(`${baseURL}/notes`, {
+      const res = await axios.get(`${baseURL}/api/notes`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -49,7 +49,7 @@ const Notes = () => {
     console.log("🛡️ POST token being sent:", userToken);
 
     try {
-      const res = await axios.post(`${baseURL}/notes`, note, {
+      const res = await axios.post(`${baseURL}/api/notes`, note, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -74,7 +74,7 @@ const Notes = () => {
 
     const userToken = localStorage.getItem('token');
     try {
-      await axios.delete(`${baseURL}/notes/${id}`, {
+      await axios.delete(`${baseURL}/api/notes/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
